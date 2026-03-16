@@ -169,27 +169,29 @@ O `source_id` evita duplicatas: se um registro já tem entrada no histórico, el
 
 ---
 
-## Módulos Disponíveis
+## Módulos Clínicos (100% Operacionais)
 
-| Módulo | Chave | Tabela Primária | isAttendance |
-|---|---|---|---|
-| Consulta | `consulta` | `anamnesis` | ✅ |
-| Avaliação Cirúrgica | `avaliacao_cirurgica` | `appointment_requests.admin_notes` | ✅ |
-| Cirurgia | `cirurgia` | `appointment_requests.admin_notes` | ✅ |
-| Retorno | `retorno` | `appointment_requests.admin_notes` | ✅ |
-| Peso | `peso` | `pet_weight_records` | ❌ |
-| Patologia | `patologia` | `pet_pathologies` | ❌ |
-| Documento | `documento` | `pet_documents` | ❌ |
-| Exame | `exame` | `pet_exams` | ❌ |
-| Fotos | `fotos` | `pet_photos` | ❌ |
-| Aplicações / Vacina | `vacina` | `pet_vaccines` | ❌ |
-| Receita | `receita` | `pet_prescriptions` | ❌ |
-| Observações | `observacoes` | `pet_observations` | ❌ |
-| Vídeo | `video` | `pet_videos` | ❌ |
-| Internação | `internacao` | `pet_hospitalizations` | ❌ |
-| Diagnóstico | `diagnostico` | `pet_pathologies` | ❌ |
-| Banho e Tosa | `banho_tosa` | `pet_observations` | ❌ |
-| Óbito | `obito` | `pet_observations` + `pets.notes` | ❌ |
+Todos os módulos listados abaixo estão totalmente funcionais, integrados ao Supabase e ao histórico unificado (Timeline). O sistema garante persistência completa de dados, geração de logs automática e rastreabilidade para cada procedimento clínico realizado.
+
+| Módulo | Chave | Tabela Primária | isAttendance | Status |
+|---|---|---|---|---|
+| Consulta | `consulta` | `anamnesis` | ✅ | 🟢 Operacional |
+| Avaliação Cirúrgica | `avaliacao_cirurgica` | `appointment_requests.admin_notes` | ✅ | 🟢 Operacional |
+| Cirurgia | `cirurgia` | `appointment_requests.admin_notes` | ✅ | 🟢 Operacional |
+| Retorno | `retorno` | `appointment_requests.admin_notes` | ✅ | 🟢 Operacional |
+| Peso | `peso` | `pet_weight_records` | ❌ | 🟢 Operacional |
+| Patologia | `patologia` | `pet_pathologies` | ❌ | 🟢 Operacional |
+| Documento | `documento` | `pet_documents` | ❌ | 🟢 Operacional |
+| Exame | `exame` | `pet_exams` | ❌ | 🟢 Operacional |
+| Fotos | `fotos` | `pet_photos` | ❌ | 🟢 Operacional |
+| Aplicações / Vacina | `vacina` | `pet_vaccines` | ❌ | 🟢 Operacional |
+| Receita | `receita` | `pet_prescriptions` | ❌ | 🟢 Operacional |
+| Observações | `observacoes` | `pet_observations` | ❌ | 🟢 Operacional |
+| Vídeo | `video` | `pet_videos` | ❌ | 🟢 Operacional |
+| Internação | `internacao` | `pet_hospitalizations` | ❌ | 🟢 Operacional |
+| Diagnóstico | `diagnostico` | `pet_pathologies` | ❌ | 🟢 Operacional |
+| Banho e Tosa | `banho_tosa` | `pet_observations` | ❌ | 🟢 Operacional |
+| Óbito | `obito` | `pet_observations` + `pets.notes` | ❌ | 🟢 Operacional |
 
 > **isAttendance=true**: o sistema cria automaticamente um registro em `appointment_requests` antes de abrir o diálogo, para garantir rastreabilidade clínica.
 
@@ -215,6 +217,17 @@ O hook agrega em uma única lista ordenada por data/hora:
 
 Modal que aparece ao clicar em qualquer entrada da timeline.
 Exibe: título, data, hora, responsável, status, descrição e todos os campos do JSONB `details` com rótulos legíveis em PT-BR.
+
+---
+
+## Inteligência Artificial (IA) & RAG
+
+O AgendaVet integra tecnologias de ponta para auxiliar o veterinário na tomada de decisão e automação de registros:
+
+- **IA Híbrida**: Motor inteligente que alterna entre **Google Gemini 1.5/2.0** e **DeepSeek V3/R1** dependendo da tarefa (análise de imagens vs. raciocínio clínico).
+- **Sistema RAG (Retrieval-Augmented Generation)**: Memória clínica alimentada por `pgvector` no Supabase. A IA "lê" o histórico do pet antes de sugerir diagnósticos ou condutas.
+- **Secretário IA**: Automação que processa anotações rápidas e preenche campos estruturados nos módulos clínicos, reduzindo o tempo de digitação.
+- **Aprendizado Contínuo**: O sistema aprende com os padrões de prescrição e diagnóstico da clínica para oferecer sugestões personalizadas.
 
 ---
 

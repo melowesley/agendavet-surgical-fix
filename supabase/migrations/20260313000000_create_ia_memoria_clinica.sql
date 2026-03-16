@@ -7,9 +7,9 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE IF NOT EXISTS public.ia_memoria_clinica (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clinic_id UUID REFERENCES public.clinics(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES auth.users(id),
-  pet_id UUID REFERENCES public.pets(id) ON DELETE SET NULL,
+  clinic_id UUID, -- Opcional para facilitar testes iniciais
+  user_id UUID,
+  pet_id UUID,    -- Opcional
   content TEXT NOT NULL,
   embedding vector(768),
   metadata JSONB DEFAULT '{}',
