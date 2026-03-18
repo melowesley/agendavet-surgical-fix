@@ -13,17 +13,19 @@ serve(async (req: Request) => {
   }
 
   try {
-    // 2. Inicializa o Supabase com o contexto do usuário (Veterinário/Admin)
+    // 2. Inicializa o Supabase
     const authHeader = req.headers.get('Authorization')!
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: authHeader } } }
     )
 
-    // Opcional: Validar usuário antes de prosseguir
+    // Opcional: Validar usuário (permite ADMIN_API_KEY para testes/admin)
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    if (authError || !user) {
+    const isServiceRole = authHeader.includes(Deno.env.get('ADMIN_API_KEY') ?? '___nothing___');
+
+    if (!isServiceRole && (authError || !user)) {
       throw new Error("Não autorizado");
     }
 
@@ -39,13 +41,14 @@ serve(async (req: Request) => {
       // Formata os dados para o embedding
       const textoParaEmbedding = typeof dados === 'string' ? dados : JSON.stringify(dados);
 
-      // Gera o embedding usando o modelo text-embedding-004
-      const embeddingResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${geminiKey}`, {
+      // Gera o embedding usando o modelo gemini-embedding-001
+      const embeddingResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${geminiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "models/text-embedding-004",
-          content: { parts: [{ text: textoParaEmbedding }] }
+          model: "models/gemini-embedding-001",
+          content: { parts: [{ text: textoParaEmbedding }] },
+          outputDimensionality: 768
         }),
       });
 
@@ -61,7 +64,7 @@ serve(async (req: Request) => {
         .from('ia_memoria_clinica')
         .insert({
           clinic_id: dados.clinic_id, // Pode ser extraído ou passado no payload
-          user_id: user.id,
+          user_id: user?.id,
           pet_id: dados.pet_id,
           content: textoParaEmbedding,
           embedding: embedding,
@@ -87,12 +90,13 @@ serve(async (req: Request) => {
         try {
           // Gera embedding da consulta
           const textoConsulta = typeof dados === 'string' ? dados : JSON.stringify(dados);
-          const embeddingResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${geminiKey}`, {
+          const embeddingResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${geminiKey}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              model: "models/text-embedding-004",
-              content: { parts: [{ text: textoConsulta }] }
+              model: "models/gemini-embedding-001",
+              content: { parts: [{ text: textoConsulta }] },
+              outputDimensionality: 768
             }),
           });
 
@@ -103,7 +107,9 @@ serve(async (req: Request) => {
             if (embedding) {
               // Busca casos semelhantes no banco
               const userClinicId = user.user_metadata?.clinic_id || dados.clinic_id;
-              const { data: memorias, error: searchError } = await supabaseClient
+              
+              // Tenta primeiro a memória clínica (autoevolução)
+              let { data: memorias, error: searchError } = await supabaseClient
                 .rpc('search_ia_memoria', {
                   query_embedding: embedding,
                   match_threshold: 0.6,
@@ -111,8 +117,24 @@ serve(async (req: Request) => {
                   filter_clinic_id: userClinicId
                 });
 
-              if (!searchError && memorias && memorias.length > 0) {
-                contextoMemoria = "\n\nCONTEXTO DE MEMÓRIA CLÍNICA (Casos Anteriores Semelhantes):\n" +
+              // Se falhar ou não encontrar nada, tenta a knowledge_base geral
+              if (searchError || !memorias || memorias.length === 0) {
+                console.log("Sem resultados em ia_memoria_clinica, tentando knowledge_base...");
+                const { data: generalData, error: generalError } = await supabaseClient
+                  .rpc('search_rag_chunks', {
+                    query_embedding: embedding,
+                    match_threshold: 0.5,
+                    match_count: 3,
+                    filter_clinic_id: userClinicId
+                  });
+                
+                if (!generalError && generalData) {
+                  memorias = generalData;
+                }
+              }
+
+              if (memorias && memorias.length > 0) {
+                contextoMemoria = "\n\nCONTEXTO DE MEMÓRIA (Protocolos e Casos Semelhantes):\n" +
                   memorias.map((m: any) => `- ${m.content}`).join('\n');
               }
             }
@@ -133,7 +155,8 @@ serve(async (req: Request) => {
         const geminiKey = Deno.env.get('GEMINI_API_KEY');
         if (!geminiKey) throw new Error("GEMINI_API_KEY não configurada.");
         
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+        // Usando gemini-flash-latest (mais estável e disponível)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiKey}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -148,7 +171,7 @@ serve(async (req: Request) => {
         const deepseekKey = Deno.env.get('DEEPSEEK_API_KEY');
         if (!deepseekKey) throw new Error("DEEPSEEK_API_KEY não configurada.");
 
-        const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        const response = await fetch("https://api.deepseek.com/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -162,6 +185,12 @@ serve(async (req: Request) => {
             ],
           }),
         });
+        
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`Erro DeepSeek (${response.status}): ${errText}`);
+        }
+        
         iaResponse = await response.json();
         break;
       }
@@ -198,7 +227,8 @@ serve(async (req: Request) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     )
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Erro na função:", error);
+    const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
     return new Response(
       JSON.stringify({ sucesso: false, erro: errorMessage }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
