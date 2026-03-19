@@ -16,7 +16,18 @@ import { MessageSquare, Send, Bot, User, Stethoscope, FileText, Syringe, Pill, A
 import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 import { ConversationSidebar } from './conversation-sidebar'
-import { AI_MODELS } from '@agendavet/shared/constants'
+// AI_MODELS definidos localmente (espelhando shared/constants.ts)
+// O import @agendavet/shared/constants não resolve no Next.js — path alias não está configurado
+const AI_MODELS = {
+  DEEPSEEK_R1: { value: 'deepseek-r1', label: 'DeepSeek R1', tier: 'free', specialty: 'Raciocínio Clínico' },
+  GEMINI_2_0_FLASH: { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', tier: 'free', specialty: 'Emergências' },
+  GEMINI_2_5_FLASH: { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', tier: 'free', specialty: 'Análise Laboratorial' },
+  GEMINI_1_5_FLASH: { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash', tier: 'free', specialty: 'Medicina Preventiva' },
+  GEMINI_2_5_PRO: { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', tier: 'premium', specialty: 'Pesquisa Veterinária' },
+  GEMINI_1_5_PRO: { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', tier: 'premium', specialty: 'Terapia Intensiva' },
+  CLAUDE_SONNET: { value: 'claude-sonnet', label: 'Claude Sonnet', tier: 'premium', specialty: 'Análise de Imagens' },
+  GPT_4O: { value: 'gpt-4o', label: 'GPT-4o', tier: 'premium', specialty: 'Planejamento Cirúrgico' },
+} as const
 
 const CLINICAL_SUGGESTIONS = [
   { icon: FileText, label: 'Resumir historico', prompt: 'Resuma o historico clinico completo deste paciente' },
