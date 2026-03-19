@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "description": "AgendaVet Skills Router - 5 Skills integrados com 40+ comandos",
+  "skills": [
+    {
+      "name": "get-shit-done",
+      "version": "1.26.0",
+      "path": "./get-shit-done",
+      "commands": [
+        "gsd-plan", "gsd-execute", "gsd-debug", "gsd-verify",
+        "gsd-ui-audit", "gsd-ship", "gsd-next"
+      ],
+      "description": "Meta-framework para desenvolvimento estruturado com 16 subagentes"
+    },
+    {
+      "name": "ui-ux-pro-max",
+      "version": "2.0.0",
+      "path": "./ui-ux-pro-max",
+      "commands": [
+        "design-system", "ui-audit", "ui-validate", "brand",
+        "design", "slides", "ui-styling"
+      ],
+      "description": "Design system generator com 161 padrões + 8 skills de design"
+    },
+    {
+      "name": "n8n-skills",
+      "version": "1.1.0",
+      "path": "./n8n-skills",
+      "commands": [
+        "validation-patterns", "error-handling", "workflow-patterns",
+        "expression-syntax", "node-configuration", "code-patterns"
+      ],
+      "description": "Referência de padrões robustos (7 skills) - 62% de cobertura de erros"
+    },
+    {
+      "name": "agent-skills",
+      "version": "1.0.0",
+      "path": "./agent-skills",
+      "commands": [
+        "deploy", "review-react", "check-performance", "audit-ux",
+        "check-accessibility", "deploy-preview", "link-vercel"
+      ],
+      "description": "React/Next.js best practices (64 rules) + Vercel deploy (6 skills)"
+    },
+    {
+      "name": "superpowers",
+      "version": "5.0.4",
+      "path": "./superpowers",
+      "commands": [
+        "brainstorm", "plan-impl", "tdd", "execute-plan", "debug-sys",
+        "code-review-req", "worktree", "parallel-agents", "respond-feedback",
+        "finish-branch", "new-skill", "verify-fix", "using-superpowers"
+      ],
+      "description": "Workflow metodologia completo (14 skills) - brainstorm to merge"
+    }
+  ],
+  "aliases": {
+    "plan": "gsd-plan",
+    "execute": "gsd-execute",
+    "debug": "gsd-debug",
+    "verify": "gsd-verify",
+    "design": "design-system",
+    "audit": "ui-audit",
+    "validate": "validation-patterns",
+    "errors": "error-handling",
+    "deploy": "deploy",
+    "review": "review-react",
+    "perf": "check-performance",
+    "brainstorm": "brainstorm",
+    "tdd": "tdd",
+    "code-review": "code-review-req",
+    "branch": "worktree",
+    "merge": "finish-branch"
+  },
+  "triggers": {
+    "autoDetect": true,
+    "description": "Sistema detecta automaticamente qual skill usar baseado em keywords na mensagem"
+  }
+}
