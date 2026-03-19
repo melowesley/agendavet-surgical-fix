@@ -35,3 +35,5 @@ bun.lockb
 *.sw?
 .vercel
 .env*.local
+.tmp.driveupload/
+.next/
