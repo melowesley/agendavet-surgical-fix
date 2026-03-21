@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createServiceSupabaseClient } from '@/lib/supabase/service'
 import { createApprovalToken } from '@/lib/auth/tokens'
 import { sendApprovalEmail } from '@/lib/auth/email'
 
 export async function POST(request: NextRequest) {
+  // Verify the request comes from the authenticated user themselves
+  const sessionClient = await createServerSupabaseClient()
+  const { data: { session } } = await sessionClient.auth.getSession()
+  if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+
   const { userId } = await request.json()
   if (!userId) return NextResponse.json({ error: 'userId obrigatório' }, { status: 400 })
+
+  // Ensure userId matches the authenticated session
+  if (userId !== session.user.id) {
+    return NextResponse.json({ error: 'Operação não permitida' }, { status: 403 })
+  }
 
   const service = createServiceSupabaseClient()
 
