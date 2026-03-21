@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { registerVet } from '@/lib/auth/register'
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { PawPrint } from 'lucide-react'
 
-export default function VetLoginPage() {
+function VetLoginPageInner() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -236,5 +236,13 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
         {children}
       </div>
     </div>
+  )
+}
+
+export default function VetLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p>Carregando...</p></div>}>
+      <VetLoginPageInner />
+    </Suspense>
   )
 }
