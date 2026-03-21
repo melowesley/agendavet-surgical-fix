@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { usePet, useOwner } from '@/lib/data-store'
+import { usePet, useOwner, supabase } from '@/lib/data-store'
+import { mutate } from 'swr'
 import { BaseAttendanceDialog } from '../shared/base-attendance-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -68,12 +69,43 @@ export function CirurgiaDialog({ open, onOpenChange, onBack, petId, petName }: C
     const [loading, setLoading] = useState(false)
 
     const handleSave = async () => {
+        if (!procedimento.trim()) return
         setLoading(true)
-        // TODO: Implementar salvamento na tabela medical_records
-        setTimeout(() => {
-            setLoading(false)
+        try {
+            const { data: userData } = await supabase.auth.getUser()
+            const recordData = {
+                pet_id: petId,
+                type: 'surgery',
+                date: format(new Date(), 'yyyy-MM-dd'),
+                description: `Cirurgia: ${procedimento}`,
+                notes: JSON.stringify({
+                    procedimento,
+                    dataCirurgia,
+                    horario,
+                    tipoAnestesia,
+                    anestesista,
+                    cirurgiao,
+                    auxiliares,
+                    tecnicaCirurgica,
+                    descricao,
+                    posOperatorio,
+                    termoConsentimento,
+                    materiais: materiais.filter(m => m.nome),
+                    farmacos: farmacos.filter(f => f.nome),
+                }),
+                veterinarian: cirurgiao,
+                user_id: userData.user?.id,
+                created_by: userData.user?.id,
+            }
+            const { error } = await (supabase.from('medical_records' as any).insert([recordData] as any) as any)
+            if (error) throw error
+            mutate('medical-records')
             onOpenChange(false)
-        }, 1000)
+        } catch (err) {
+            console.error('Erro ao salvar cirurgia:', err)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const addMaterial = () => {
