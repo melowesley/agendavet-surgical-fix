@@ -31,11 +31,7 @@ export async function POST(req: Request) {
       .eq('user_id', user.id)
       .single()
 
-    if (!membership) {
-      return Response.json({ error: 'No clinic membership' }, { status: 403 })
-    }
-
-    const clinicId = membership.clinic_id
+    const clinicId = membership?.clinic_id ?? null
 
     const body = await req.json()
     const {
