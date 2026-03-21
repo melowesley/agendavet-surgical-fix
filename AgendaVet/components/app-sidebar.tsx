@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/sidebar'
 
 const navItems = [
-  { title: 'Visão Geral', href: '/', icon: LayoutDashboard },
+  { title: 'Visão Geral', href: '/vet/dashboard', icon: LayoutDashboard },
   { title: 'Pacientes', href: '/pets', icon: PawPrint },
   { title: 'Tutores', href: '/owners', icon: Users },
   { title: 'Agenda', href: '/appointments', icon: Calendar },
