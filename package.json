@@ -15,5 +15,8 @@
   },
   "devDependencies": {
     "supabase": "^2.78.1"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
   }
 }
