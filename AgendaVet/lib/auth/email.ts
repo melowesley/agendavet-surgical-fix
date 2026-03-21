@@ -1,5 +1,14 @@
 // lib/auth/email.ts
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 interface ApprovalEmailParams {
   ownerEmail: string
   secretarioNome: string
@@ -31,8 +40,8 @@ export async function sendApprovalEmail({
       subject: `Novo cadastro aguardando aprovação — ${secretarioNome}`,
       html: `
         <h2>Novo secretário aguardando aprovação</h2>
-        <p><strong>Nome:</strong> ${secretarioNome}</p>
-        <p><strong>Email:</strong> ${secretarioEmail}</p>
+        <p><strong>Nome:</strong> ${escapeHtml(secretarioNome)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(secretarioEmail)}</p>
         <p>Clique no botão abaixo para revisar e aprovar o acesso:</p>
         <a href="${approvalLink}" style="
           display: inline-block;

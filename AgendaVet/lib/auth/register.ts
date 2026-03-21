@@ -46,13 +46,20 @@ export async function registerVet(formData: {
   const token = await createApprovalToken(userId)
 
   // 4. Enviar email para o dono
-  await sendApprovalEmail({
-    ownerEmail:      process.env.OWNER_EMAIL!,
-    secretarioNome:  formData.fullName,
-    secretarioEmail: formData.email,
-    approvalToken:   token,
-    appUrl:          process.env.NEXT_PUBLIC_APP_URL!,
-  })
+  try {
+    await sendApprovalEmail({
+      ownerEmail:      process.env.OWNER_EMAIL!,
+      secretarioNome:  formData.fullName,
+      secretarioEmail: formData.email,
+      approvalToken:   token,
+      appUrl:          process.env.NEXT_PUBLIC_APP_URL!,
+    })
+  } catch {
+    // Account created and pending — but email failed.
+    // Don't rollback: the admin can still manually approve via Supabase.
+    // Just surface a warning to the user.
+    throw new Error('Cadastro criado, mas houve um problema ao enviar o email de aprovação. Entre em contato com o administrador.')
+  }
 }
 
 export async function registerTutor(formData: {

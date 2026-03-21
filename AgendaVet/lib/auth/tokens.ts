@@ -44,13 +44,17 @@ export async function validateApprovalToken(token: string) {
 export async function consumeApprovalToken(token: string, userId: string) {
   const supabase = createServiceSupabaseClient()
 
-  await supabase
+  const { error: tokenError } = await supabase
     .from('approval_tokens')
     .update({ used: true })
     .eq('token', token)
 
-  await supabase
+  if (tokenError) throw new Error('Erro ao invalidar token')
+
+  const { error: roleError } = await supabase
     .from('user_roles')
     .update({ status: 'active' })
     .eq('user_id', userId)
+
+  if (roleError) throw new Error('Erro ao ativar usuário')
 }
