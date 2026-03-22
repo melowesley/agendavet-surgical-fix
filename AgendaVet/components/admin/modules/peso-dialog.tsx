@@ -61,11 +61,8 @@ export function PesoDialog({ open, onOpenChange, onBack, petId, petName }: PesoD
     const [editingId, setEditingId] = useState<string | null>(null)
     const [veterinarian, setVeterinarian] = useState('Dr. Cleyton Chaves')
 
-    useEffect(() => {
-        if (open) loadRecords()
-    }, [open, petId])
-
     const loadRecords = async () => {
+        if (!petId) return
         const { data, error } = await (supabase
             .from('pet_weight_records' as any)
             .select('*')
@@ -78,6 +75,16 @@ export function PesoDialog({ open, onOpenChange, onBack, petId, petName }: PesoD
         }
         if (data) setRecords(data)
     }
+
+    useEffect(() => {
+        if (open && petId) {
+            loadRecords()
+        }
+        if (!open) {
+            resetForm()
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open])
 
     const handleSave = async () => {
         if (!weight || !date) {
@@ -108,10 +115,10 @@ export function PesoDialog({ open, onOpenChange, onBack, petId, petName }: PesoD
                 await addMedicalRecord({
                     petId,
                     date: new Date(date).toISOString(),
-                    type: 'procedure',
+                    type: 'peso',
                     title: 'Pesagem',
                     description: `Peso: ${weight} kg. ${notes ? `Obs: ${notes}` : ''}`,
-                    veterinarian: 'Dr. Cleyton Chaves',
+                    veterinarian: veterinarian || 'Dr. Cleyton Chaves',
                 })
 
                 // Also insert into pet_weight_records for historical tracking

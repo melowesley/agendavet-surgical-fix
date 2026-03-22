@@ -58,9 +58,9 @@ export function InternacaoDialog({ open, onOpenChange, onBack, petId, petName }:
         { id: '1', nome: '', dose: '', quantidade: '', valorUnitario: '' }
     ])
 
-    // Expandable sections state
-    const [materiaisExpanded, setMateriaisExpanded] = useState(false)
-    const [medicacoesExpanded, setMedicacoesExpanded] = useState(false)
+    // Expandable sections state - aberto por padrão para facilitar uso
+    const [materiaisExpanded, setMateriaisExpanded] = useState(true)
+    const [medicacoesExpanded, setMedicacoesExpanded] = useState(true)
 
     // Search states
     const [materiaisSearch, setMateriaisSearch] = useState('')
@@ -589,7 +589,7 @@ export function InternacaoDialog({ open, onOpenChange, onBack, petId, petName }:
 
                             <div className="space-y-2">
                                 {medicacoes.map((medicacao, index) => (
-                                    <div key={medicacao.id} className="grid grid-cols-5 gap-2">
+                                    <div key={medicacao.id} className="grid grid-cols-6 gap-2">
                                         <Input
                                             value={medicacao.nome}
                                             onChange={(e) => {
@@ -597,7 +597,7 @@ export function InternacaoDialog({ open, onOpenChange, onBack, petId, petName }:
                                                 updated[index].nome = e.target.value
                                                 setMedicacoes(updated)
                                             }}
-                                            placeholder="Nome da Medicação"
+                                            placeholder="Medicação"
                                             className="h-9 text-xs col-span-2"
                                         />
                                         <Input
@@ -618,6 +618,18 @@ export function InternacaoDialog({ open, onOpenChange, onBack, petId, petName }:
                                                 setMedicacoes(updated)
                                             }}
                                             placeholder="Qtd"
+                                            className="h-9 text-xs"
+                                        />
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            value={medicacao.valorUnitario}
+                                            onChange={(e) => {
+                                                const updated = [...medicacoes]
+                                                updated[index].valorUnitario = e.target.value
+                                                setMedicacoes(updated)
+                                            }}
+                                            placeholder="R$ Unit."
                                             className="h-9 text-xs"
                                         />
                                         <Button

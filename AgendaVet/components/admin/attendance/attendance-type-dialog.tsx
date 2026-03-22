@@ -69,19 +69,19 @@ export function AttendanceTypeDialog({ open, onOpenChange, onSelect }: Attendanc
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 py-3">
                     {attendanceTypes.map((type) => (
                         <button
                             key={type.id}
                             onClick={() => onSelect(type.id)}
                             className={cn(
-                                "group flex flex-col items-center justify-center p-4 rounded-xl border border-border/50 transition-all duration-200",
-                                "hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-1",
+                                "group flex flex-col items-center justify-center p-3 rounded-lg border border-border/50 transition-all duration-200",
+                                "hover:border-emerald-500/50 hover:shadow-md hover:shadow-emerald-500/10 hover:-translate-y-0.5",
                                 type.bg
                             )}
                         >
-                            <type.icon className={cn("size-8 mb-3 transition-transform group-hover:scale-110", type.color)} />
-                            <span className="text-xs font-semibold text-center leading-tight">{type.label}</span>
+                            <type.icon className={cn("size-5 mb-1.5 transition-transform group-hover:scale-110", type.color)} />
+                            <span className="text-[10px] font-semibold text-center leading-tight">{type.label}</span>
                         </button>
                     ))}
                 </div>
