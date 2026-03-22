@@ -56,7 +56,7 @@ export function BaseAttendanceDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="clinical-modal-content sm:max-w-5xl max-h-[95vh] flex flex-col p-0 overflow-hidden">
+            <DialogContent showCloseButton={false} className="clinical-modal-content sm:max-w-5xl max-h-[95vh] flex flex-col p-0 overflow-hidden">
                 {/* Header - Estilo Galeria */}
                 <DialogHeader className="px-6 py-4 border-b border-border/30 flex flex-row items-start justify-between shrink-0">
                     <div className="flex items-center gap-3">

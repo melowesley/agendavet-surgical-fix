@@ -241,6 +241,7 @@ export function ConsultaDialog({ open, onOpenChange, onBack, petId, petName }: C
             saveLabel="Finalizar Atendimento"
             isSaving={loading}
             printTitle={`Consulta_${petName}_${format(new Date(), 'dd_MM_yyyy')}`}
+            onBack={onBack}
         >
             <div className="space-y-6 bg-slate-50/50 p-6 rounded-lg">
                 <Tabs defaultValue="anamnese" className="w-full">
