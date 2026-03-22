@@ -57,4 +57,10 @@ export async function consumeApprovalToken(token: string, userId: string) {
     .eq('user_id', userId)
 
   if (roleError) throw new Error('Erro ao ativar usuário')
+
+  const { error: metaError } = await supabase.auth.admin.updateUserById(userId, {
+    app_metadata: { status: 'active' },
+  })
+
+  if (metaError) throw new Error('Erro ao atualizar metadata do usuário')
 }
