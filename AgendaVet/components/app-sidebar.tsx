@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   PawPrint,
@@ -13,7 +13,9 @@ import {
   Stethoscope,
   BarChart3,
   DollarSign,
+  LogOut,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import {
   Sidebar,
   SidebarContent,
@@ -47,9 +49,16 @@ const bottomNavItems = [
 export function AppSidebar() {
   const pathname = usePathname()
   const { setOpenMobile } = useSidebar()
+  const router = useRouter()
 
   const handleNavClick = () => {
     setOpenMobile(false)
+  }
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
   }
 
   return (
@@ -125,6 +134,15 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 )
               })}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={handleLogout}
+                  className="h-10 transition-all duration-200 text-sidebar-foreground/70 hover:text-red-500 hover:bg-red-500/10 cursor-pointer"
+                >
+                  <LogOut className="size-4" />
+                  <span>Sair</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
