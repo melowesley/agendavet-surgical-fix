@@ -13,6 +13,7 @@ import {
   Stethoscope,
   BarChart3,
   DollarSign,
+  Package,
   LogOut,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -37,6 +38,7 @@ const navItems = [
   { title: 'Prontuários', href: '/medical-records', icon: FileText },
   { title: 'Analytics', href: '/analytics', icon: BarChart3 },
   { title: 'Financeiro', href: '/financeiro', icon: DollarSign },
+  { title: 'Produtos & Serviços', href: '/products-services', icon: Package },
   { title: 'Assistente IA', href: '/assistant', icon: MessageSquare },
   { title: 'Vet Copilot', href: '/vet-copilot', icon: Stethoscope },
 ]
