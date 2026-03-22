@@ -34,13 +34,13 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
 
   if (isPublic(pathname)) {
     // Redireciona usuário autenticado da landing page para o dashboard correto
-    if (pathname === '/' && session) {
-      const meta = session.user.app_metadata as { role?: string; status?: string }
+    if (pathname === '/' && user) {
+      const meta = user.app_metadata as { role?: string; status?: string }
       const role = meta?.role
       const status = meta?.status
       if ((role === 'vet' && status === 'active') || role === 'admin') {
@@ -57,13 +57,13 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  if (!session) {
+  if (!user) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
-  const meta = session.user.app_metadata as { role?: string; status?: string }
+  const meta = user.app_metadata as { role?: string; status?: string }
   const role = meta?.role
   const status = meta?.status
 
