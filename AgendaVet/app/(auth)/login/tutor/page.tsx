@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { registerTutor } from '@/lib/auth/register'
 import { Button } from '@/components/ui/button'
@@ -14,7 +13,6 @@ export default function TutorLoginPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
 
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
@@ -32,7 +30,7 @@ export default function TutorLoginPage() {
       password: loginPassword,
     })
     if (error) { setError(error.message); setLoading(false); return }
-    router.push('/tutor/dashboard')
+    window.location.href = '/tutor/dashboard'
   }
 
   async function handleRegister(e: React.FormEvent) {
@@ -41,7 +39,7 @@ export default function TutorLoginPage() {
     setError(null)
     try {
       await registerTutor({ email: regEmail, password: regPassword, fullName: regName })
-      router.push('/tutor/dashboard')
+      window.location.href = '/tutor/dashboard'
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro ao cadastrar')
       setLoading(false)

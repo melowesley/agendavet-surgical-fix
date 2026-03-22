@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   PawPrint,
@@ -38,8 +38,7 @@ const navItems = [
   { title: 'Analytics', href: '/analytics', icon: BarChart3 },
   { title: 'Financeiro', href: '/financeiro', icon: DollarSign },
   { title: 'Assistente IA', href: '/assistant', icon: MessageSquare },
-  { title: 'Área do Tutor (App)', href: 'https://agendavet-tutor.vercel.app', icon: Users, external: true },
-  { title: 'Área do Vet (App)', href: 'https://agendavet-vet.vercel.app', icon: Stethoscope, external: true },
+  { title: 'Vet Copilot', href: '/vet-copilot', icon: Stethoscope },
 ]
 
 const bottomNavItems = [
@@ -49,7 +48,6 @@ const bottomNavItems = [
 export function AppSidebar() {
   const pathname = usePathname()
   const { setOpenMobile } = useSidebar()
-  const router = useRouter()
 
   const handleNavClick = () => {
     setOpenMobile(false)
@@ -58,7 +56,7 @@ export function AppSidebar() {
   const handleLogout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.push('/')
+    window.location.href = '/'
   }
 
   return (

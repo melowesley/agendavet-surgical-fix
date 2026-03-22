@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { registerVet } from '@/lib/auth/register'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,6 @@ function VetLoginPageInner() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const router = useRouter()
   const searchParams = useSearchParams()
   const statusParam = searchParams.get('status')
 
@@ -45,11 +44,11 @@ function VetLoginPageInner() {
     const { data: { session } } = await supabase.auth.getSession()
     const appMeta = session?.user?.app_metadata as { role?: string; status?: string } | undefined
     if (appMeta?.status === 'pending') {
-      router.push('/login/vet?status=pending')
+      window.location.href = '/login/vet?status=pending'
     } else if (appMeta?.status === 'rejected') {
-      router.push('/login/vet?status=rejected')
+      window.location.href = '/login/vet?status=rejected'
     } else {
-      router.push('/vet/dashboard')
+      window.location.href = '/vet/dashboard'
     }
     setLoading(false)
   }
@@ -82,7 +81,7 @@ function VetLoginPageInner() {
     const { data: { session } } = await supabase.auth.getSession()
     const appMeta = session?.user?.app_metadata as { role?: string; status?: string } | undefined
     if (appMeta?.status === 'active') {
-      router.push('/vet/dashboard')
+      window.location.href = '/vet/dashboard'
     } else {
       setError('Sua conta ainda não foi aprovada.')
     }
